@@ -1,0 +1,34 @@
+media:
+  input: "images"
+  output: "images"
+
+content:
+  - name: "prompts"
+    label: "Prompts"
+    path: "index.html"
+    type: "file"
+    fields:
+      - name: "imageLinks"
+        label: "Image Links"
+        type: "list"
+        fields:
+          - name: "url"
+            label: "Image URL"
+            type: "text"
+            
+      - name: "prompts"
+        label: "Prompt List"
+        type: "list"
+        fields:
+          - name: "title"
+            label: "Title"
+            type: "text"
+          - name: "style"
+            label: "Style"
+            type: "text"
+          - name: "preview"
+            label: "Preview Text"
+            type: "textarea"
+          - name: "full"
+            label: "Full Prompt"
+            type: "textarea"

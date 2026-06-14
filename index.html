@@ -1,406 +1,390 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta name="google-site-verification" content="42XFdtBmr1w8i4mYrviWS84GvITiDbBbDNY6EU3aD0s" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Laiq · Prompt Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e8e8e8;
+            line-height: 1.5;
+        }
+
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, #1a1a2e, #0a0a0a);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 3rem;
+        }
+
+        .logo img {
+            height: 55px;
+            width: auto;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff, #b8b8b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            color: #d4a373;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+        }
+
+        .bio {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            line-height: 1.7;
+        }
+
+        .terminal {
+            background: #0f0f12;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin: 2rem auto;
+            max-width: 700px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            color: #5cdb7d;
+            text-align: left;
+        }
+
+        .prompt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .prompt-card {
+            background: rgba(20, 20, 28, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 163, 115, 0.4);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+            background: #1a1a22;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #d4a373;
+        }
+
+        .card-style {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7a7a8a;
+            margin-bottom: 1rem;
+        }
+
+        .card-preview {
+            font-size: 0.85rem;
+            color: #b8b8c8;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .btn-copy {
+            background: #d4a373;
+            color: #0a0a0a;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.85rem;
+        }
+
+        .btn-copy:hover {
+            background: #e8b88a;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1a1a24;
+            max-width: 800px;
+            width: 90%;
+            border-radius: 24px;
+            padding: 2rem;
+            border: 1px solid #d4a373;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content pre {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.85rem;
+            background: #0f0f12;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #e0e0e0;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #d4a373;
+        }
+
+        footer {
+            text-align: center;
+            padding: 3rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #6a6a7a;
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: #d4a373;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .tagline { font-size: 1.2rem; }
+            .prompt-grid { grid-template-columns: 1fr; }
+            .container { padding: 1rem; }
+        }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="google-site-verification" content="42XFdtBmr1w8i4mYrviWS84GvITiDbBbDNY6EU3aD0s" /&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Studio Laiq · Prompt Architecture&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>* {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #0a0a0a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #e8e8e8;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>line-height: 1.5;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.bg-gradient {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: radial-gradient(circle at 20% 30%, #1a1a2e, #0a0a0a);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>z-index: -1;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 1400px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.hero {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 4rem 2rem 3rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid rgba(255,255,255,0.1);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 3rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.logo img {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 55px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>h1 {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 4rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 700;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: -0.02em;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #ffffff, #b8b8b8);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>-webkit-background-clip: text;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-clip: text;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: transparent;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.tagline {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 400;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.bio {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 800px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0 auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #b0b0b0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>line-height: 1.7;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.terminal {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #0f0f12;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #2a2a2a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 2rem auto;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 700px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: 'Monaco', 'Menlo', monospace;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #5cdb7d;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: left;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.prompt-grid {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: grid;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));</p>
-<p class="p1"><span class="Apple-converted-space">            </span>gap: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 3rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.prompt-card {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(20, 20, 28, 0.8);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 20px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid rgba(255,255,255,0.08);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: transform 0.2s ease, border-color 0.2s ease;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.prompt-card:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transform: translateY(-5px);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-color: rgba(212, 163, 115, 0.4);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-image {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 260px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #1a1a22;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-image img {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>object-fit: cover;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-content {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-title {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.35rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 0.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-style {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.8rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>letter-spacing: 1px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #7a7a8a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.card-preview {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #b8b8c8;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 1.5rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: -webkit-box;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>-webkit-line-clamp: 3;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>-webkit-box-orient: vertical;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow: hidden;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-copy {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #0a0a0a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 0.6rem 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 40px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-weight: 600;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: background 0.2s;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-copy:hover {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #e8b88a;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: none;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: fixed;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>top: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>left: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: rgba(0,0,0,0.95);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>z-index: 1000;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal-content {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #1a1a24;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 800px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 90%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 24px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 2rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 80vh;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>overflow-y: auto;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.modal-content pre {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>white-space: pre-wrap;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-family: monospace;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background: #0f0f12;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 1rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-radius: 12px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 1rem 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #e0e0e0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.close-modal {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>float: right;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 1.8rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>cursor: pointer;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>footer {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>padding: 3rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 3rem;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>border-top: 1px solid rgba(255,255,255,0.05);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #6a6a7a;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>footer a {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>color: #d4a373;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text-decoration: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>@media (max-width: 768px) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>h1 { font-size: 2.5rem; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.tagline { font-size: 1.2rem; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.prompt-grid { grid-template-columns: 1fr; }</p>
-<p class="p1"><span class="Apple-converted-space">            </span>.container { padding: 1rem; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1">&lt;div class="bg-gradient"&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;div class="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="hero"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="logo"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;img src="https://laiqverse11.files.wordpress.com/2022/12/cropped-site-icon.png?w=300" alt="Studio Laiq Logo"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h1&gt;Prompt Architecture&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="tagline"&gt;I Direct Machines to Imagine.&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="bio"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>I'm &lt;strong&gt;Laiq Ahmed Qureshi&lt;/strong&gt; — Creative Director, Digital Strategist, and AI Prompt Architect with 20+ years of experience.<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>This is my engineered library of prompts for cinematic, editorial, and emotionally intelligent visuals.<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>Each prompt is a blueprint. Every image, a directive.</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="terminal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>user@StudioLaiq:~$ ./load --vault prompts&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&gt; Loading 21 prompt architectures... ✓&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&gt; Identity lock engaged. Taste protocols active.&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&gt; Ready. &lt;span style="color:#d4a373;"&gt;Direct machines to imagine.&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="prompt-grid" id="promptGrid"&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;footer&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>Studio Laiq: Prompt Architecture — A curated system for AI image direction.&lt;br&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>© Laiq Ahmed Qureshi · Master site: &lt;a href="https://laiqverse11.wordpress.com"&gt;LaiqVerse&lt;/a&gt;</p>
-<p class="p1">&lt;/footer&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div id="promptModal" class="modal"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="modal-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="close-modal" onclick="closeModal()"&gt;&amp;times;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3 id="modalTitle" style="color:#d4a373;"&gt;&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;pre id="modalPrompt"&gt;&lt;/pre&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn-copy" onclick="copyModalPrompt()"&gt;📋 Copy Full Prompt&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const imageLinks = [</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse1.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse9.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/fazalbylaiqverse.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse24.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/faizbylaiqverse.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/zardaribylaiqverse2.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/hadiqabylaiqverse.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/malalalaiqverse.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/nawaz2bylaiqverse.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse30.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse33.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse34.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse38.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse42.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/pope2bylaiqverse-1.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse45.png",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/fazalbylaiqverse.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/benazirbylaiqverse.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/shabnam-portrait-by-laiqverse.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/maulana-ilyas-qadri-portrait-by-laiqverse.jpg",</p>
-<p class="p1"><span class="Apple-converted-space">        </span>"https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/fazal-laiqverse.jpg"</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const prompts = [</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Sketchbook Portrait — Grunge Realism", style: "Editorial / Mixed Media", preview: "Ultra-detailed semi-realistic portrait illustration blending melancholic grunge realism with expressive sketchbook fashion art...", full: "Ultra-detailed semi-realistic portrait illustration blending melancholic grunge realism with expressive sketchbook fashion art, combining cinematic soft-rendered facial realism and spontaneous hand-drawn ink energy, delicate painterly skin texture with visible pores and subtle blush transitions, luminous pale skin tones mixed with warm earthy beige and dusty peach palette, layered loose sketch lines around the silhouette and clothing, unfinished spontaneous strokes, controlled chaotic linework, rough editorial illustration aesthetic, soft airbrush shading fused with dry brush textures, flowing wispy hair rendered in hyper-detailed strands with painterly highlights, expressive eyes with emotional depth, natural lips with glossy muted tones, realistic anatomy softened by artistic stylization, semi-abstract clothing folds with scribbled contour accents, textured recycled paper background mixed with dark vignette atmosphere, muted monochromatic neutrals, warm cream, taupe, dusty brown, ash gray, faded charcoal, subtle white paint smears and raw brush patches, elegant balance between polished realism and raw sketch imperfection, cinematic moody lighting, soft diffused shadows, high-detail portrait focus, fashion editorial meets emotional fine art illustration." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Vintage Engraving — Money Portrait", style: "Intaglio / Woodcut", preview: "Style transfer — Vintage financial engraving / Money portrait illustration. Medium: Intaglio woodcut and steel-plate scratchboard engraving...", full: "Style transfer — Vintage financial engraving / Money portrait illustration. Medium: Intaglio woodcut and steel-plate scratchboard engraving. Color palette: Strictly monochrome, pure black ink on crisp white background. Lighting: High-contrast dramatic portrait lighting rendered entirely through line thickness variation. Precision cross-hatching, fine stippling, and continuous concentric contour lines. Smooth micro-fine parallel curved lines wrapping around facial geometry to create realistic 3D volume, depth, and skin tone transitions. Flowing crisp high-contrast black and white linework defining individual locks, highlights, and deep shadows. Clean portrait cut-out isolated against stark pure white background. Sharp, clean, sophisticated, tactile, highly detailed asset graphic." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Soft Charcoal Ink Wash", style: "Minimalist Ink", preview: "Transform the input photo into a refined monochromatic ink portrait on a pure white background...", full: "Transform the input photo into a refined monochromatic ink portrait on a pure white background. Clean side profile facing left, preserving exact facial identity and proportions. Soft charcoal-gray ink with subtle tonal variation, controlled splatter accents, delicate watercolor diffusion, and faint mist-like dispersion along the edges. No signature, no typography. Do not change the face features." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Ornate Teal Editorial Poster", style: "Vintage / Graphic", preview: "Vintage engraving, intricate linework, ornate woodcut illustration, detailed cross-hatching...", full: "Style: Vintage engraving, intricate linework, ornate woodcut illustration, detailed cross-hatching. Subject integration: Central portrait framing, high-contrast subjects seamlessly blended with decorative patterns. Texture and patterns: Elaborate filigree, baroque scrollwork, stylized swirling patterns mimicking fur or clothing texture, dense linocut detailing. Color palette background: Deep teal, muted turquoise with a subtle damask pattern overlay. Main subject: Monochromatic cream, off-white, and charcoal black. Accent: Vibrant high-saturation orange-red on a single prominent accessory. Lighting: Dramatic chiaroscuro, stark contrast between deep black shadows and bright cream highlights. Composition: Symmetrical, tight close-up portrait, bold vector-like outlines, graphic design poster aesthetic. Mood: Cool, edgy, retro-modern, stylishly surreal." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "3D Editorial Caricature (Gouache)", style: "3D / Editorial", preview: "Premium 3D digital caricature and editorial illustration style. Exaggerated proportions with handcrafted digital painting...", full: "Premium 3D digital caricature and editorial illustration style. Exaggerated proportions: stylized, slightly oversized head relative to the torso to emphasize vibrant expressive personality. Art Style: Handcrafted digital painting with the texture of fine gouache and smooth watercolor washes. Visible, deliberate brushstrokes. No flat, plastic, or synthetic AI gradients. High-end editorial magazine caricature style. Lighting: Warm, luminous three-quarter Rembrandt lighting casting a soft glow across skin tones with rich dimensional highlights and deep warm shadows. Vibrant saturated color palette featuring rich ochres, warm skin undertones, and clean whites against a crisp solid white background. Masterpiece, ultra-high fidelity, 8K resolution." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Technical Ink &amp; Blueprint Portrait", style: "Conceptual / Technical", preview: "Ultra-detailed monochrome technical sketch portrait. Fusion of architectural drafting and expressive ink sketching...", full: "Create an ultra-detailed monochrome technical sketch portrait based strictly on the uploaded reference image. Preserve the exact identity, facial structure, anatomy, proportions, expression, age details, hairstyle, skin texture, wrinkles, beard, mustache, glasses, makeup, hijab, accessories, and all distinguishing facial features with extremely high fidelity. The artwork style should resemble a fusion of architectural drafting, expressive ink sketching, neurographic line art, technical blueprint illustration, and chaotic fine-line conceptual portraiture. Color palette: black ink on pure white background only. Ultra-high detail. Hyper-real identity preservation." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "High-Contrast Vector Pop Art", style: "WPAP / Vector", preview: "High-contrast vector portrait illustration from low-angle close-up. Geometric grayscale planes...", full: "Create a high-contrast vector portrait illustration in a premium modern vector pop-art / WPAP-inspired style, using sharp-edged geometric grayscale planes to build the face, neck, and clothing. No soft blending, no smooth painterly gradients. Add a bold rough electric-red rim outline around the subject's outer silhouette. Background: dominantly vibrant red with large jagged abstract dark-gray shapes. The final result should feel like a bold premium poster illustration." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Colored Pencil &amp; Marker Workspace", style: "Hand-drawn / Studio", preview: "High-energy vibrant colored pencil and marker illustration. Creative desk with MacBook Pro...", full: "Transform the uploaded reference image into a high-energy, vibrant colored pencil and marker illustration while strictly maintaining the core facial features. Style: Hand-drawn using cross-hatching, ink outlines, and layered colored pencil textures. Environment: A creative's desk with MacBook Pro showing graphic design software, coffee mug, markers, sketches. Background: Explosive, abstract bursts of multi-colored ink and paint splashes. 4k resolution." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Miniature Diorama — Exhausted Creative", style: "3D Macro / Cinematic", preview: "Hyper-realistic miniature diorama. Tiny creative professional sleeping across a giant MacBook Pro keyboard...", full: "Create a cinematic hyper-realistic 3D miniature diorama scene featuring the uploaded subject transformed into a tiny exhausted creative professional sleeping across the keyboard of a giant Apple MacBook Pro. The miniature person must have a photorealistic oversized head with smaller stylized body while preserving perfect facial realism. The giant laptop must be a modern Apple MacBook Pro with realistic aluminum body, black keyboard keys. Screen displays realistic professional graphic design work. Scene includes coffee mug with spill, sticky notes. 8K cinematic quality." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Futuristic Editorial Mixed-Media", style: "Avant-garde / Collage", preview: "Ultra-detailed futuristic editorial mixed-media portrait. Hyper-realistic face against fragmented collage...", full: "Ultra-detailed futuristic editorial mixed-media portrait blending hyper-realistic digital collage aesthetics with precision geometric concept painting and avant-garde magazine design. Anatomically accurate semi-realistic human portrait. Composition built from overlapping geometric segmentation, sliced polygonal planes, magazine cut-outs, newspaper textures, multilingual typography, technical annotations. Color palette: grayscale and neutrals with cobalt blue, mustard yellow, golden orange, deep red. Merges high-fashion editorial, futuristic concept art, and cubist abstraction." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "3D Organic Strata-Relief", style: "Sculptural / Abstract", preview: "3D layered organic relief sculpture. Flowing carved contour layers, geological strata...", full: "Transform the entire image into a highly dimensional 3D layered organic relief sculpture built from flowing carved contour layers, smooth ribbon-like terrain folds, stacked geological strata forms, embossed organic surface ridges, sculpted leather-like bands, carved metallic and mineral textures. The face, hair, skin, and clothing become part of one continuous sculptural material system. Color palette: burnt copper, bronze, obsidian black, deep plum, magenta, indigo, dark teal. Ultra-detailed 3D organic relief artwork." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Expressive Semi-Abstract Brush Painting", style: "Fine Art / Abstract", preview: "Expressive brush painting using earthy neutral tones. Sepia, warm beige, burnt umber...", full: "Expressive semi-abstract brush painting style using earthy neutral tones, dominated by sepia, warm beige, sandstone, burnt umber, raw sienna, clay brown, dusty ivory, and soft cream tones. Entire artwork formed with loose flowing brush strokes. All line accents use raw cream, pale ochre, and light sandstone tones. Smooth dry-brush textures combined with diluted acrylic and watercolor-like layering. Minimalist gallery-style composition." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Luxury Metallic Coin Portrait", style: "3D / Luxury Asset", preview: "Ultra-detailed embossed metallic medallion artwork. Gold, silver, or bronze finish...", full: "Transform any uploaded human portrait into an ultra-detailed embossed metallic medallion/coin artwork while fully preserving identity. Core style: high-relief metallic embossed portrait medallion. Material options: gold, silver, bronze, platinum, black steel. Finish: luxury polished metal with realistic reflections and engraved depth. Background: clean luxury solid background in deep navy, black, or dark emerald. Ultra realistic render quality." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Fashion Illustration × Oil Painting Hybrid", style: "Fashion / Atelier", preview: "Hybrid portrait combining contemporary fashion illustration with expressive oil painting...", full: "Transform the uploaded portrait into a hybrid visual style combining contemporary fashion illustration, expressive atelier oil painting, and semi-abstract sketch aesthetics. Preserve 100% of the subject's original facial identity. Blend smooth digital cel-shading with painterly realism. Integrate dynamic line variation: razor-sharp technical contours mixed with soft unfinished sketch marks, spontaneous ink streaks, rough charcoal lines. Lighting: soft yet cinematic. Palette: muted skin tones, earthy ochres, burnt sienna." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Watercolor &amp; Ink — Museum Portrait", style: "Watercolor / Fine Art", preview: "Museum-quality expressive watercolor and ink portrait. Preserves exact identity...", full: "Transform the uploaded image into a museum-quality expressive watercolor and ink portrait while preserving the subject's exact identity. Create in the style of a master contemporary watercolor illustrator using authentic traditional mixed-media techniques on premium cold-press watercolor paper. Blend expressive watercolor painting, loose urban sketching, fine ink drawing. Incorporate authentic watercolor behavior including pigment blooms, soft bleeding edges. No text, no signature, no watermark." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Archival Ink — Editorial Illustration", style: "Pen &amp; Ink / Vintage", preview: "Museum-quality handcrafted editorial illustration. Archival ink and pen-and-nib crosshatching...", full: "Transform the uploaded image into a museum-quality handcrafted editorial illustration. Created by an expert traditional illustrator using archival ink, pen-and-nib crosshatching, graphite detailing, and subtle watercolor wash techniques on aged fine-art paper. Apply subtle sepia-toned watercolor stains, paper aging effects, ink splatters, coffee-wash textures. Should feel like a rare collector's edition artwork." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Cinematic Double Exposure Portrait", style: "Double Exposure / Editorial", preview: "High-contrast cinematic double-exposure editorial portrait. Vertical segmented slices...", full: "Create a high-contrast cinematic double-exposure editorial portrait using the uploaded image as the ONLY identity reference. Construct the portrait using multiple irregular vertical segmented slices of varying widths and heights. Inside selected facial slices, integrate a secondary cinematic narrative scene: a lonely hooded figure walking through a rain-soaked urban night street. Lighting: cinematic, dramatic, moody, editorial. Grayscale tonality mixed with muted cinematic blues. Museum-grade digital compositing." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Sketchbook Caricature — Intellectual with Glasses", style: "Caricature / Sketchbook", preview: "Highly detailed hand-drawn caricature portrait. Exaggerated features, skeptical expression...", full: "Create a highly detailed hand-drawn caricature portrait in a premium sketchbook illustration style, humorously exaggerating distinctive features with an oversized head, elongated neck, enlarged black thick-rimmed eyeglasses. Expression: mildly skeptical, intellectual. Render as ultra-detailed pen-and-ink drawing blended with watercolor washes. Background: aged sketchbook paper with subtle coffee stains. Museum-quality editorial caricature." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "Guitar Caricature — Sepia Series", style: "Caricature / Musical", preview: "Highly detailed digital caricature in warm sepia tones. Skinny young man playing acoustic guitar...", full: "A highly detailed digital caricature illustration in a warm sepia and brown-toned palette, featuring a skinny young man with an exaggeratedly large head and stylized proportions, playing an acoustic guitar. Painterly digital art style with visible expressive brush strokes, soft lighting, dramatic highlights, subtle watercolor-like blending. Clean off-white cream background with faint abstract watercolor washes." },</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ title: "MJ &amp; Freddie — Museum Caricature", style: "Caricature / Renaissance", preview: "Museum-grade hybrid caricature portrait of Michael Jackson and Freddie Mercury...", full: "Create a museum-grade ultra-detailed hybrid caricature portrait featuring Michael Jackson and Freddie Mercury with maximum identity fidelity. Rendered as master-level handcrafted illustration blending Renaissance fine portraiture, expressive watercolor painting, and delicate ink sketchwork. Background: dreamy abstract watercolor cityscape on textured parchment with street-art elements — black ink splashes, paint blooms in red, orange, and teal." }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>const grid = document.getElementById('promptGrid');</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>prompts.forEach((prompt, index) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const card = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>card.className = 'prompt-card';</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>const imageUrl = imageLinks[index] || '';</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>card.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card-image"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>${imageUrl ? `&lt;img src="${imageUrl}" alt="${prompt.title}" onerror="this.parentElement.innerHTML='&lt;div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#888;\'&gt;🎨&lt;/div&gt;'"&gt;` : '&lt;div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;"&gt;🎨&lt;/div&gt;'}</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;div class="card-content"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="card-title"&gt;${prompt.title}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="card-style"&gt;${prompt.style}&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;div class="card-preview"&gt;${prompt.preview.substring(0, 120)}...&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>&lt;button class="btn-copy" onclick="showPrompt(${index})"&gt;📋 View &amp; Copy Prompt&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>grid.appendChild(card);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>let currentPromptIndex = 0;</p>
-<p class="p2"><span class="Apple-converted-space">    </span></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function showPrompt(index) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>currentPromptIndex = index;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('modalTitle').innerText = prompts[index].title;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('modalPrompt').innerText = prompts[index].full;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('promptModal').style.display = 'flex';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function closeModal() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('promptModal').style.display = 'none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function copyModalPrompt() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const promptText = prompts[currentPromptIndex].full;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>navigator.clipboard.writeText(promptText).then(() =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>alert('✅ Prompt copied to clipboard!');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>window.onclick = function(event) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const modal = document.getElementById('promptModal');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (event.target === modal) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>closeModal();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+<div class="bg-gradient"></div>
+<div class="container">
+    <div class="hero">
+        <div class="logo">
+            <img src="https://laiqverse11.files.wordpress.com/2022/12/cropped-site-icon.png?w=300" alt="Studio Laiq Logo">
+        </div>
+        <h1>Prompt Architecture</h1>
+        <div class="tagline">I Direct Machines to Imagine.</div>
+        <div class="bio">
+            I'm <strong>Laiq Ahmed Qureshi</strong> — Creative Director, Digital Strategist, and AI Prompt Architect with 20+ years of experience. 
+            This is my engineered library of prompts for cinematic, editorial, and emotionally intelligent visuals. 
+            Each prompt is a blueprint. Every image, a directive.
+        </div>
+        
+        <div class="terminal">
+            user@StudioLaiq:~$ ./load --vault prompts<br>
+            > Loading 21 prompt architectures... ✓<br>
+            > Identity lock engaged. Taste protocols active.<br>
+            > Ready. <span style="color:#d4a373;">Direct machines to imagine.</span>
+        </div>
+    </div>
+
+    <div class="prompt-grid" id="promptGrid"></div>
+</div>
+
+<footer>
+    Studio Laiq: Prompt Architecture — A curated system for AI image direction.<br>
+    © Laiq Ahmed Qureshi · Master site: <a href="https://laiqverse11.wordpress.com">LaiqVerse</a>
+</footer>
+
+<div id="promptModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h3 id="modalTitle" style="color:#d4a373;"></h3>
+        <pre id="modalPrompt"></pre>
+        <button class="btn-copy" onclick="copyModalPrompt()">📋 Copy Full Prompt</button>
+    </div>
+</div>
+
+<script>
+    const imageLinks = [
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse1.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse9.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/fazalbylaiqverse.jpg",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse24.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/faizbylaiqverse.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/zardaribylaiqverse2.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/hadiqabylaiqverse.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/malalalaiqverse.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/nawaz2bylaiqverse.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse30.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse33.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse34.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse38.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse42.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/pope2bylaiqverse-1.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/05/laiqverse45.png",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/fazalbylaiqverse.jpg",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/benazirbylaiqverse.jpg",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/shabnam-portrait-by-laiqverse.jpg",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/maulana-ilyas-qadri-portrait-by-laiqverse.jpg",
+        "https://laiqverse11.wordpress.com/wp-content/uploads/2026/06/fazal-laiqverse.jpg"
+    ];
+
+    const prompts = [
+        { title: "Sketchbook Portrait — Grunge Realism", style: "Editorial / Mixed Media", preview: "Ultra-detailed semi-realistic portrait illustration blending melancholic grunge realism with expressive sketchbook fashion art...", full: "Ultra-detailed semi-realistic portrait illustration blending melancholic grunge realism with expressive sketchbook fashion art, combining cinematic soft-rendered facial realism and spontaneous hand-drawn ink energy, delicate painterly skin texture with visible pores and subtle blush transitions, luminous pale skin tones mixed with warm earthy beige and dusty peach palette, layered loose sketch lines around the silhouette and clothing, unfinished spontaneous strokes, controlled chaotic linework, rough editorial illustration aesthetic, soft airbrush shading fused with dry brush textures, flowing wispy hair rendered in hyper-detailed strands with painterly highlights, expressive eyes with emotional depth, natural lips with glossy muted tones, realistic anatomy softened by artistic stylization, semi-abstract clothing folds with scribbled contour accents, textured recycled paper background mixed with dark vignette atmosphere, muted monochromatic neutrals, warm cream, taupe, dusty brown, ash gray, faded charcoal, subtle white paint smears and raw brush patches, elegant balance between polished realism and raw sketch imperfection, cinematic moody lighting, soft diffused shadows, high-detail portrait focus, fashion editorial meets emotional fine art illustration." },
+        
+        { title: "Vintage Engraving — Money Portrait", style: "Intaglio / Woodcut", preview: "Style transfer — Vintage financial engraving / Money portrait illustration. Medium: Intaglio woodcut and steel-plate scratchboard engraving...", full: "Style transfer — Vintage financial engraving / Money portrait illustration. Medium: Intaglio woodcut and steel-plate scratchboard engraving. Color palette: Strictly monochrome, pure black ink on crisp white background. Lighting: High-contrast dramatic portrait lighting rendered entirely through line thickness variation. Precision cross-hatching, fine stippling, and continuous concentric contour lines. Smooth micro-fine parallel curved lines wrapping around facial geometry to create realistic 3D volume, depth, and skin tone transitions. Flowing crisp high-contrast black and white linework defining individual locks, highlights, and deep shadows. Clean portrait cut-out isolated against stark pure white background. Sharp, clean, sophisticated, tactile, highly detailed asset graphic." },
+        
+        { title: "Soft Charcoal Ink Wash", style: "Minimalist Ink", preview: "Transform the input photo into a refined monochromatic ink portrait on a pure white background...", full: "Transform the input photo into a refined monochromatic ink portrait on a pure white background. Clean side profile facing left, preserving exact facial identity and proportions. Soft charcoal-gray ink with subtle tonal variation, controlled splatter accents, delicate watercolor diffusion, and faint mist-like dispersion along the edges. No signature, no typography. Do not change the face features." },
+        
+        { title: "Ornate Teal Editorial Poster", style: "Vintage / Graphic", preview: "Vintage engraving, intricate linework, ornate woodcut illustration, detailed cross-hatching...", full: "Style: Vintage engraving, intricate linework, ornate woodcut illustration, detailed cross-hatching. Subject integration: Central portrait framing, high-contrast subjects seamlessly blended with decorative patterns. Texture and patterns: Elaborate filigree, baroque scrollwork, stylized swirling patterns mimicking fur or clothing texture, dense linocut detailing. Color palette background: Deep teal, muted turquoise with a subtle damask pattern overlay. Main subject: Monochromatic cream, off-white, and charcoal black. Accent: Vibrant high-saturation orange-red on a single prominent accessory. Lighting: Dramatic chiaroscuro, stark contrast between deep black shadows and bright cream highlights. Composition: Symmetrical, tight close-up portrait, bold vector-like outlines, graphic design poster aesthetic. Mood: Cool, edgy, retro-modern, stylishly surreal." },
+        
+        { title: "3D Editorial Caricature (Gouache)", style: "3D / Editorial", preview: "Premium 3D digital caricature and editorial illustration style. Exaggerated proportions with handcrafted digital painting...", full: "Premium 3D digital caricature and editorial illustration style. Exaggerated proportions: stylized, slightly oversized head relative to the torso to emphasize vibrant expressive personality. Art Style: Handcrafted digital painting with the texture of fine gouache and smooth watercolor washes. Visible, deliberate brushstrokes. No flat, plastic, or synthetic AI gradients. High-end editorial magazine caricature style. Lighting: Warm, luminous three-quarter Rembrandt lighting casting a soft glow across skin tones with rich dimensional highlights and deep warm shadows. Vibrant saturated color palette featuring rich ochres, warm skin undertones, and clean whites against a crisp solid white background. Masterpiece, ultra-high fidelity, 8K resolution." },
+        
+        { title: "Technical Ink & Blueprint Portrait", style: "Conceptual / Technical", preview: "Ultra-detailed monochrome technical sketch portrait. Fusion of architectural drafting and expressive ink sketching...", full: "Create an ultra-detailed monochrome technical sketch portrait based strictly on the uploaded reference image. Preserve the exact identity, facial structure, anatomy, proportions, expression, age details, hairstyle, skin texture, wrinkles, beard, mustache, glasses, makeup, hijab, accessories, and all distinguishing facial features with extremely high fidelity. The artwork style should resemble a fusion of architectural drafting, expressive ink sketching, neurographic line art, technical blueprint illustration, and chaotic fine-line conceptual portraiture. Color palette: black ink on pure white background only. Ultra-high detail. Hyper-real identity preservation." },
+        
+        { title: "High-Contrast Vector Pop Art", style: "WPAP / Vector", preview: "High-contrast vector portrait illustration from low-angle close-up. Geometric grayscale planes...", full: "Create a high-contrast vector portrait illustration in a premium modern vector pop-art / WPAP-inspired style, using sharp-edged geometric grayscale planes to build the face, neck, and clothing. No soft blending, no smooth painterly gradients. Add a bold rough electric-red rim outline around the subject's outer silhouette. Background: dominantly vibrant red with large jagged abstract dark-gray shapes. The final result should feel like a bold premium poster illustration." },
+        
+        { title: "Colored Pencil & Marker Workspace", style: "Hand-drawn / Studio", preview: "High-energy vibrant colored pencil and marker illustration. Creative desk with MacBook Pro...", full: "Transform the uploaded reference image into a high-energy, vibrant colored pencil and marker illustration while strictly maintaining the core facial features. Style: Hand-drawn using cross-hatching, ink outlines, and layered colored pencil textures. Environment: A creative's desk with MacBook Pro showing graphic design software, coffee mug, markers, sketches. Background: Explosive, abstract bursts of multi-colored ink and paint splashes. 4k resolution." },
+        
+        { title: "Miniature Diorama — Exhausted Creative", style: "3D Macro / Cinematic", preview: "Hyper-realistic miniature diorama. Tiny creative professional sleeping across a giant MacBook Pro keyboard...", full: "Create a cinematic hyper-realistic 3D miniature diorama scene featuring the uploaded subject transformed into a tiny exhausted creative professional sleeping across the keyboard of a giant Apple MacBook Pro. The miniature person must have a photorealistic oversized head with smaller stylized body while preserving perfect facial realism. The giant laptop must be a modern Apple MacBook Pro with realistic aluminum body, black keyboard keys. Screen displays realistic professional graphic design work. Scene includes coffee mug with spill, sticky notes. 8K cinematic quality." },
+        
+        { title: "Futuristic Editorial Mixed-Media", style: "Avant-garde / Collage", preview: "Ultra-detailed futuristic editorial mixed-media portrait. Hyper-realistic face against fragmented collage...", full: "Ultra-detailed futuristic editorial mixed-media portrait blending hyper-realistic digital collage aesthetics with precision geometric concept painting and avant-garde magazine design. Anatomically accurate semi-realistic human portrait. Composition built from overlapping geometric segmentation, sliced polygonal planes, magazine cut-outs, newspaper textures, multilingual typography, technical annotations. Color palette: grayscale and neutrals with cobalt blue, mustard yellow, golden orange, deep red. Merges high-fashion editorial, futuristic concept art, and cubist abstraction." },
+        
+        { title: "3D Organic Strata-Relief", style: "Sculptural / Abstract", preview: "3D layered organic relief sculpture. Flowing carved contour layers, geological strata...", full: "Transform the entire image into a highly dimensional 3D layered organic relief sculpture built from flowing carved contour layers, smooth ribbon-like terrain folds, stacked geological strata forms, embossed organic surface ridges, sculpted leather-like bands, carved metallic and mineral textures. The face, hair, skin, and clothing become part of one continuous sculptural material system. Color palette: burnt copper, bronze, obsidian black, deep plum, magenta, indigo, dark teal. Ultra-detailed 3D organic relief artwork." },
+        
+        { title: "Expressive Semi-Abstract Brush Painting", style: "Fine Art / Abstract", preview: "Expressive brush painting using earthy neutral tones. Sepia, warm beige, burnt umber...", full: "Expressive semi-abstract brush painting style using earthy neutral tones, dominated by sepia, warm beige, sandstone, burnt umber, raw sienna, clay brown, dusty ivory, and soft cream tones. Entire artwork formed with loose flowing brush strokes. All line accents use raw cream, pale ochre, and light sandstone tones. Smooth dry-brush textures combined with diluted acrylic and watercolor-like layering. Minimalist gallery-style composition." },
+        
+        { title: "Luxury Metallic Coin Portrait", style: "3D / Luxury Asset", preview: "Ultra-detailed embossed metallic medallion artwork. Gold, silver, or bronze finish...", full: "Transform any uploaded human portrait into an ultra-detailed embossed metallic medallion/coin artwork while fully preserving identity. Core style: high-relief metallic embossed portrait medallion. Material options: gold, silver, bronze, platinum, black steel. Finish: luxury polished metal with realistic reflections and engraved depth. Background: clean luxury solid background in deep navy, black, or dark emerald. Ultra realistic render quality." },
+        
+        { title: "Fashion Illustration × Oil Painting Hybrid", style: "Fashion / Atelier", preview: "Hybrid portrait combining contemporary fashion illustration with expressive oil painting...", full: "Transform the uploaded portrait into a hybrid visual style combining contemporary fashion illustration, expressive atelier oil painting, and semi-abstract sketch aesthetics. Preserve 100% of the subject's original facial identity. Blend smooth digital cel-shading with painterly realism. Integrate dynamic line variation: razor-sharp technical contours mixed with soft unfinished sketch marks, spontaneous ink streaks, rough charcoal lines. Lighting: soft yet cinematic. Palette: muted skin tones, earthy ochres, burnt sienna." },
+        
+        { title: "Watercolor & Ink — Museum Portrait", style: "Watercolor / Fine Art", preview: "Museum-quality expressive watercolor and ink portrait. Preserves exact identity...", full: "Transform the uploaded image into a museum-quality expressive watercolor and ink portrait while preserving the subject's exact identity. Create in the style of a master contemporary watercolor illustrator using authentic traditional mixed-media techniques on premium cold-press watercolor paper. Blend expressive watercolor painting, loose urban sketching, fine ink drawing. Incorporate authentic watercolor behavior including pigment blooms, soft bleeding edges. No text, no signature, no watermark." },
+        
+        { title: "Archival Ink — Editorial Illustration", style: "Pen & Ink / Vintage", preview: "Museum-quality handcrafted editorial illustration. Archival ink and pen-and-nib crosshatching...", full: "Transform the uploaded image into a museum-quality handcrafted editorial illustration. Created by an expert traditional illustrator using archival ink, pen-and-nib crosshatching, graphite detailing, and subtle watercolor wash techniques on aged fine-art paper. Apply subtle sepia-toned watercolor stains, paper aging effects, ink splatters, coffee-wash textures. Should feel like a rare collector's edition artwork." },
+        
+        { title: "Cinematic Double Exposure Portrait", style: "Double Exposure / Editorial", preview: "High-contrast cinematic double-exposure editorial portrait. Vertical segmented slices...", full: "Create a high-contrast cinematic double-exposure editorial portrait using the uploaded image as the ONLY identity reference. Construct the portrait using multiple irregular vertical segmented slices of varying widths and heights. Inside selected facial slices, integrate a secondary cinematic narrative scene: a lonely hooded figure walking through a rain-soaked urban night street. Lighting: cinematic, dramatic, moody, editorial. Grayscale tonality mixed with muted cinematic blues. Museum-grade digital compositing." },
+        
+        { title: "Sketchbook Caricature — Intellectual with Glasses", style: "Caricature / Sketchbook", preview: "Highly detailed hand-drawn caricature portrait. Exaggerated features, skeptical expression...", full: "Create a highly detailed hand-drawn caricature portrait in a premium sketchbook illustration style, humorously exaggerating distinctive features with an oversized head, elongated neck, enlarged black thick-rimmed eyeglasses. Expression: mildly skeptical, intellectual. Render as ultra-detailed pen-and-ink drawing blended with watercolor washes. Background: aged sketchbook paper with subtle coffee stains. Museum-quality editorial caricature." },
+        
+        { title: "Guitar Caricature — Sepia Series", style: "Caricature / Musical", preview: "Highly detailed digital caricature in warm sepia tones. Skinny young man playing acoustic guitar...", full: "A highly detailed digital caricature illustration in a warm sepia and brown-toned palette, featuring a skinny young man with an exaggeratedly large head and stylized proportions, playing an acoustic guitar. Painterly digital art style with visible expressive brush strokes, soft lighting, dramatic highlights, subtle watercolor-like blending. Clean off-white cream background with faint abstract watercolor washes." },
+        
+        { title: "MJ & Freddie — Museum Caricature", style: "Caricature / Renaissance", preview: "Museum-grade hybrid caricature portrait of Michael Jackson and Freddie Mercury...", full: "Create a museum-grade ultra-detailed hybrid caricature portrait featuring Michael Jackson and Freddie Mercury with maximum identity fidelity. Rendered as master-level handcrafted illustration blending Renaissance fine portraiture, expressive watercolor painting, and delicate ink sketchwork. Background: dreamy abstract watercolor cityscape on textured parchment with street-art elements — black ink splashes, paint blooms in red, orange, and teal." }
+    ];
+
+    const grid = document.getElementById('promptGrid');
+    
+    prompts.forEach((prompt, index) => {
+        const card = document.createElement('div');
+        card.className = 'prompt-card';
+        
+        const imageUrl = imageLinks[index] || '';
+        
+        card.innerHTML = `
+            <div class="card-image">
+                ${imageUrl ? `<img src="${imageUrl}" alt="${prompt.title}" onerror="this.parentElement.innerHTML='<div style=\'display:flex;align-items:center;justify-content:center;height:100%;color:#888;\'>🎨</div>'">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">🎨</div>'}
+            </div>
+            <div class="card-content">
+                <div class="card-title">${prompt.title}</div>
+                <div class="card-style">${prompt.style}</div>
+                <div class="card-preview">${prompt.preview.substring(0, 120)}...</div>
+                <button class="btn-copy" onclick="showPrompt(${index})">📋 View & Copy Prompt</button>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+
+    let currentPromptIndex = 0;
+    
+    function showPrompt(index) {
+        currentPromptIndex = index;
+        document.getElementById('modalTitle').innerText = prompts[index].title;
+        document.getElementById('modalPrompt').innerText = prompts[index].full;
+        document.getElementById('promptModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('promptModal').style.display = 'none';
+    }
+
+    function copyModalPrompt() {
+        const promptText = prompts[currentPromptIndex].full;
+        navigator.clipboard.writeText(promptText).then(() => {
+            alert('✅ Prompt copied to clipboard!');
+        });
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('promptModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+</script>
 </body>
 </html>
